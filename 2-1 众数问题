@@ -1,0 +1,65 @@
+#include<stdio.h>
+#include<stdlib.h>
+#define M 20
+int number=0;//number表示众数 
+int sum=0;//sum表示该众数的重数 
+int Partition(int a[],int p,int r)//在a[p]到a[r-1]中随机选择一个元素作为主元
+{   int x=a[r-1];
+	int i=p-1;
+	int temp,j;
+	for(j=p;j<=r-2;j++)
+	{	if(a[j]<=x)
+		{   i++;
+			temp=a[i];
+			a[i]=a[j];
+			a[j]=temp;
+		}
+	}
+	temp=a[i+1];
+	a[i+1]=a[r-1];
+	a[r-1]=temp;
+	return i+1;
+}
+int Count(int a[],int x,int p,int r)//统计数组中与x相等的元素的个数并返回
+{
+	int count=0,i;
+	for( i=p;i<r;i++)
+	{
+		if(a[i]==x)
+			count++;
+	}
+	return count;
+}
+void Modal(int a[],int p,int r)//通过分治法得到数组的众数和该众数的重数
+{
+	if(p<r)
+	{
+		int q=Partition(a,p,r);//统计分解法的主元出现的个数
+		int temp=Count(a,a[q],p,q+1);
+		if(sum<temp)
+		{
+			sum=temp;
+			number=a[q];
+		}		
+		if(q-p-sum>sum)//如果该元素以左的个数大于重数，向左递归
+			Modal(a,p,q);	
+		else if(r-q-1>sum)//如果该元素以右的个数大于重数，向右递归
+			Modal(a,q+1,r);
+	}
+}
+int main()
+{
+	int num[M],temp,n;
+	int i=0,j=0;
+	
+	scanf("%d",&n);
+	for(i=0;i<n;i++)
+	{
+		scanf("%d",&num[i]);
+	}
+	printf("\n");
+	Modal(num,0,n);
+	printf("众数为：%d\n",number);
+	printf("\n"); 
+	printf("重数为：%d\n",sum);
+  }
